@@ -160,44 +160,38 @@
     .phase-row{grid-template-columns:1fr}
 
     nav{
-      position:sticky;
-      top:calc(env(safe-area-inset-top) + 6px);
-      z-index:1000;
-      display:grid;
-      grid-template-columns:repeat(3,minmax(0,1fr));
-      gap:7px;
-      margin:12px 0 18px;
-      padding:8px;
-      background:rgba(245,247,251,.96);
-      -webkit-backdrop-filter:blur(14px);
-      backdrop-filter:blur(14px);
-      border:1px solid rgba(217,224,232,.9);
-      border-radius:16px;
-      box-shadow:0 8px 24px rgba(23,50,77,.12);
-    }
-    nav button{
-      width:100%;
-      min-width:0;
-      padding:9px 6px;
-      border-radius:11px;
-      font-size:11px;
-      line-height:1.15;
-      white-space:normal;
+      position:static;
+      display:flex;
+      flex-wrap:nowrap;
+      gap:8px;
+      margin:12px 0 16px;
+      padding:0 0 4px;
+      background:transparent;
+      border:none;
       box-shadow:none;
+      overflow-x:auto;
+      overflow-y:hidden;
+      -webkit-overflow-scrolling:touch;
+      scrollbar-width:none;
+    }
+    nav::-webkit-scrollbar{display:none}
+    nav button{
+      flex:0 0 auto;
+      width:auto;
+      min-width:max-content;
+      padding:8px 11px;
+      border-radius:999px;
+      font-size:11px;
+      line-height:1;
+      white-space:nowrap;
+      box-shadow:0 2px 8px rgba(23,50,77,.08);
     }
   }
 
 @media(max-width:700px){
-  .app{padding:12px 12px 86px}
+  .app{padding:12px}
   .hero{border-radius:20px;padding:20px}
   .hero h1{font-size:26px}
-  nav{
-    position:fixed;left:0;right:0;bottom:0;z-index:50;
-    background:rgba(245,247,251,.96);backdrop-filter:blur(14px);
-    padding:8px 10px;margin:0;border-top:1px solid #d9e0e8;
-    flex-wrap:nowrap;overflow-x:auto;
-  }
-  nav button{white-space:nowrap;box-shadow:none;border:1px solid #d9e0e8;padding:9px 12px}
 }
 
 
