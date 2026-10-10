@@ -1,0 +1,535 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Half Ironman Training Plan</title>
+<style>
+  :root{
+    --bg:#f5f7fb;
+    --panel:#ffffff;
+    --ink:#17324d;
+    --muted:#657286;
+    --line:#d9e0e8;
+    --blue:#2e5eaa;
+    --teal:#2c7a7b;
+    --green:#4e8a63;
+    --gold:#c99a2e;
+    --orange:#c56a2d;
+    --red:#a94442;
+    --soft-blue:#eaf1fb;
+    --soft-teal:#e6f3f2;
+    --soft-green:#eaf5ee;
+    --soft-gold:#faf2dc;
+    --soft-red:#f9eaea;
+    --shadow:0 10px 30px rgba(23,50,77,.08);
+    --radius:18px;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background:var(--bg);
+    color:#203040;
+  }
+  .app{max-width:1280px;margin:0 auto;padding:24px}
+  .hero{
+    background:linear-gradient(135deg,#17324d,#2e5eaa);
+    color:#fff;
+    border-radius:26px;
+    padding:28px;
+    box-shadow:var(--shadow);
+  }
+  .hero h1{margin:0 0 8px;font-size:32px}
+  .hero p{margin:0;color:rgba(255,255,255,.85)}
+  .hero-grid{
+    display:grid;
+    grid-template-columns:repeat(4,minmax(0,1fr));
+    gap:12px;
+    margin-top:22px;
+  }
+  .stat{
+    background:rgba(255,255,255,.10);
+    border:1px solid rgba(255,255,255,.15);
+    border-radius:16px;
+    padding:14px;
+  }
+  .stat .label{font-size:12px;opacity:.75;text-transform:uppercase;letter-spacing:.08em}
+  .stat .value{font-size:22px;font-weight:750;margin-top:4px}
+  nav{
+    display:flex;gap:10px;flex-wrap:wrap;margin:22px 0;
+  }
+  nav button{
+    border:none;border-radius:999px;padding:10px 15px;background:#fff;color:var(--ink);
+    cursor:pointer;box-shadow:0 2px 8px rgba(23,50,77,.08);font-weight:650;
+  }
+  nav button.active{background:var(--ink);color:#fff}
+  .view{display:none}
+  .view.active{display:block}
+  .grid{display:grid;gap:18px}
+  .cols-2{grid-template-columns:1.2fr .8fr}
+  .cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .card{
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:20px;
+    box-shadow:var(--shadow);
+  }
+  .card h2,.card h3{margin-top:0;color:var(--ink)}
+  .section-title{margin:10px 0 14px;color:var(--ink)}
+  .muted{color:var(--muted)}
+  .week-strip{
+    display:grid;
+    grid-template-columns:repeat(7,minmax(0,1fr));
+    gap:10px;
+  }
+  .day{
+    background:#fff;border:1px solid var(--line);border-radius:16px;padding:14px;min-height:128px;
+  }
+  .day strong{display:block;color:var(--ink);margin-bottom:10px}
+  .am,.pm{font-size:13px;line-height:1.35;margin:8px 0}
+  .tag{
+    display:inline-block;border-radius:999px;padding:5px 9px;font-size:12px;font-weight:700;
+  }
+  .run{background:#e8f1ff;color:#1c4e93}
+  .bike{background:#e9f4ec;color:#2f6f47}
+  .swim{background:#e7f7f5;color:#1f6d6e}
+  .strength{background:#f5ecfb;color:#6c3c8b}
+  .rest{background:#f1f3f6;color:#5d6673}
+  .phase-row{
+    display:grid;
+    grid-template-columns:170px 1fr 220px;
+    gap:16px;
+    padding:15px 0;
+    border-bottom:1px solid var(--line);
+    align-items:start;
+  }
+  .phase-row:last-child{border-bottom:none}
+  .phase-name{font-weight:800;color:var(--ink)}
+  .phase-date{color:var(--muted);font-size:13px}
+  .progress{
+    height:8px;background:#e8edf2;border-radius:999px;overflow:hidden;margin-top:8px
+  }
+  .progress > span{display:block;height:100%;background:linear-gradient(90deg,var(--teal),var(--blue))}
+  .session-grid{
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:16px;
+  }
+  .session{
+    border:1px solid var(--line);border-radius:18px;padding:18px;background:#fff;
+  }
+  .session-top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
+  .session h3{margin:0;color:var(--ink)}
+  .session p{margin:8px 0}
+  .details{margin-top:12px;padding-top:12px;border-top:1px dashed var(--line)}
+  .checkline{display:flex;gap:8px;align-items:center;margin-top:12px}
+  .checkline input{width:18px;height:18px}
+  .filters{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px}
+  select{
+    border:1px solid var(--line);border-radius:12px;padding:10px 12px;background:#fff;color:var(--ink);font-weight:650
+  }
+  table{width:100%;border-collapse:collapse}
+  th,td{padding:12px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}
+  th{color:var(--ink);font-size:13px}
+  .callout{
+    background:var(--soft-gold);border:1px solid #ecd8a8;border-radius:16px;padding:16px;
+  }
+  .good{
+    background:var(--soft-green);border:1px solid #cfe6d7;border-radius:16px;padding:16px;
+  }
+  .warning{
+    background:var(--soft-red);border:1px solid #efd0d0;border-radius:16px;padding:16px;
+  }
+  .bar{
+    height:14px;background:#edf1f4;border-radius:999px;overflow:hidden;margin-top:6px
+  }
+  .bar span{height:100%;display:block}
+  .z1{background:#b8c2cc}.z2{background:#7dbba1}.z3{background:#e0bd61}.z4{background:#dd8a5d}.z5{background:#c95e5e}
+  .small{font-size:12px}
+  footer{padding:24px 4px;color:var(--muted);font-size:12px;text-align:center}
+  @media(max-width:900px){
+    .hero-grid,.cols-2,.cols-3,.week-strip,.session-grid{grid-template-columns:1fr}
+    .phase-row{grid-template-columns:1fr}
+  }
+
+@media(max-width:700px){
+  .app{padding:12px 12px 86px}
+  .hero{border-radius:20px;padding:20px}
+  .hero h1{font-size:26px}
+  nav{
+    position:fixed;left:0;right:0;bottom:0;z-index:50;
+    background:rgba(245,247,251,.96);backdrop-filter:blur(14px);
+    padding:8px 10px;margin:0;border-top:1px solid #d9e0e8;
+    flex-wrap:nowrap;overflow-x:auto;
+  }
+  nav button{white-space:nowrap;box-shadow:none;border:1px solid #d9e0e8;padding:9px 12px}
+}
+
+</style>
+
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#17324D">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="70.3 Plan">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+
+</head>
+<body>
+<div class="app">
+  <section class="hero">
+    <h1>Half Ironman Training Plan</h1>
+    <p>12 Oct 2026 → 6 Mar 2027 · Built around your fixed strength schedule and current endurance base.</p>
+    <div class="hero-grid">
+      <div class="stat"><div class="label">Race</div><div class="value">6 Mar 2027</div></div>
+      <div class="stat"><div class="label">Plan length</div><div class="value">21 weeks</div></div>
+      <div class="stat"><div class="label">Run LTHR</div><div class="value">174 bpm</div></div>
+      <div class="stat"><div class="label">Max HR</div><div class="value">198 bpm</div></div>
+    </div>
+  </section>
+
+  <nav>
+    <button class="active" data-view="overview">Overview</button>
+    <button data-view="week">Weekly Schedule</button>
+    <button data-view="october">Until End of October</button>
+    <button data-view="phases">Training Phases</button>
+    <button data-view="zones">HR Zones</button>
+    <button data-view="reasoning">Why This Works</button>
+<button data-view="settingsView">App & Backup</button>
+  </nav>
+
+  <section id="overview" class="view active">
+    <div class="grid cols-2">
+      <div class="card">
+        <h2>Your Core Structure</h2>
+        <p class="muted">Three bikes, two main runs, two swims, and three non-negotiable strength sessions.</p>
+        <div class="week-strip" id="miniWeek"></div>
+      </div>
+      <div class="card">
+        <h2>Priority Hierarchy</h2>
+        <div class="good"><strong>1. Bike development</strong><br>Biggest opportunity. Build from your current 50–60 km long ride toward race-specific 3–4 hour endurance.</div>
+        <br>
+        <div class="callout"><strong>2. Preserve run durability</strong><br>Keep the long run mainly aerobic. Your run base is already stronger than your cycling base.</div>
+        <br>
+        <div class="card" style="box-shadow:none;background:var(--soft-teal)">
+          <strong>3. Swim efficiency + open-water skills</strong><br>
+          Pool for technique and structured work. Open water for sighting, wetsuit comfort, pacing and confidence.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="week" class="view">
+    <div class="card">
+      <h2>Broad Weekly Schedule</h2>
+      <div class="week-strip" id="fullWeek"></div>
+    </div>
+    <div class="grid cols-3" style="margin-top:18px">
+      <div class="card">
+        <h3>Main quality sessions</h3>
+        <p><strong>Tuesday run:</strong> tempo / threshold / race-specific running.</p>
+        <p><strong>Thursday bike:</strong> primary quality cycling session.</p>
+      </div>
+      <div class="card">
+        <h3>Main endurance sessions</h3>
+        <p><strong>Saturday:</strong> long aerobic run.</p>
+        <p><strong>Sunday:</strong> long bike, increasingly race-specific.</p>
+      </div>
+      <div class="card">
+        <h3>Low-cost volume</h3>
+        <p><strong>Wednesday bike:</strong> easy aerobic volume only.</p>
+        <p><strong>Wednesday/Sunday swim:</strong> technical + aerobic volume.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="october" class="view">
+    <div class="card">
+      <div class="session-top">
+        <div>
+          <h2>Week-by-Week: 12 Oct → 1 Nov</h2>
+          <p class="muted">These are your detailed sessions for the rest of October. Check them off as you go; progress is stored locally in your browser.</p>
+        </div>
+        <select id="weekFilter">
+          <option value="all">Show all weeks</option>
+          <option value="1">Week 1 · 12 Oct</option>
+          <option value="2">Week 2 · 19 Oct</option>
+          <option value="3">Week 3 · 26 Oct</option>
+        </select>
+      </div>
+      <div id="octoberSessions"></div>
+    </div>
+  </section>
+
+  <section id="phases" class="view">
+    <div class="card">
+      <h2>Training Phases to Race Day</h2>
+      <div id="phaseList"></div>
+    </div>
+  </section>
+
+  <section id="zones" class="view">
+    <div class="grid cols-2">
+      <div class="card">
+        <h2>Run HR Zones</h2>
+        <p class="muted">Based on run LTHR 174 bpm. Use HR alongside RPE and mechanics, not in isolation.</p>
+        <table>
+          <tr><th>Zone</th><th>HR</th><th>Use</th></tr>
+          <tr><td>Z1</td><td>&lt;148</td><td>Recovery</td></tr>
+          <tr><td>Z2</td><td>148–156</td><td>Easy / long running</td></tr>
+          <tr><td>Z3</td><td>157–164</td><td>Tempo / 70.3 run effort</td></tr>
+          <tr><td>Z4</td><td>165–173</td><td>Threshold work</td></tr>
+          <tr><td>Z5</td><td>≥174</td><td>Short hard efforts</td></tr>
+        </table>
+      </div>
+      <div class="card">
+        <h2>Bike Zones</h2>
+        <div class="callout">
+          <strong>Do not copy your run LTHR onto the bike.</strong><br>
+          In Week 2, use the Wattbike to establish a cycling-specific threshold.
+        </div>
+        <p><strong>Test:</strong> 15 min progressive warm-up → 30 min maximal sustainable effort → 10 min easy.</p>
+        <p>Use the <strong>average HR of the final 20 minutes</strong> as an approximate cycling LTHR benchmark.</p>
+      </div>
+    </div>
+    <div class="card" style="margin-top:18px">
+      <h3>Intensity visual</h3>
+      <div class="small">Z1 Recovery</div><div class="bar"><span class="z1" style="width:20%"></span></div>
+      <div class="small">Z2 Aerobic</div><div class="bar"><span class="z2" style="width:45%"></span></div>
+      <div class="small">Z3 Tempo</div><div class="bar"><span class="z3" style="width:65%"></span></div>
+      <div class="small">Z4 Threshold</div><div class="bar"><span class="z4" style="width:82%"></span></div>
+      <div class="small">Z5 Hard</div><div class="bar"><span class="z5" style="width:100%"></span></div>
+    </div>
+  </section>
+
+  <section id="reasoning" class="view">
+    <div class="grid cols-2">
+      <div class="card">
+        <h2>Why three bikes?</h2>
+        <p>Your running base is already comparatively strong. The 90 km bike is the discipline most likely to determine whether you start the run with useful legs.</p>
+        <p>The three-bike pattern gives you:</p>
+        <ul>
+          <li>one low-cost aerobic bike,</li>
+          <li>one quality bike,</li>
+          <li>one long race-development ride.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h2>Why not three standalone runs?</h2>
+        <p>You already tolerate 15–20 km long runs. More run volume would add disproportionate musculoskeletal load while competing with cycling development and lower-body strength.</p>
+        <p>Bricks gradually provide a third running exposure without requiring another weekday training slot.</p>
+      </div>
+      <div class="card">
+        <h2>Why open water by Halloween?</h2>
+        <p>Early exposure is useful if it stays low stress. Your first sessions are for comfort, sighting and continuous rhythm, not fitness testing.</p>
+        <p>Pool sessions remain your best place to improve repeatable technique.</p>
+      </div>
+      <div class="card">
+        <h2>Why Friday stays empty</h2>
+        <p>Saturday and Sunday contain your most important endurance work. A real recovery day protects those sessions and helps you absorb the Tuesday–Thursday cluster.</p>
+      </div>
+    </div>
+  </section>
+
+
+  <section id="settingsView" class="view">
+    <div class="grid cols-2">
+      <div class="card">
+        <h2>Install on iPhone</h2>
+        <p>Open the hosted app in <strong>Safari</strong>, tap <strong>Share</strong> → <strong>Add to Home Screen</strong> → turn on <strong>Open as Web App</strong> → <strong>Add</strong>.</p>
+        <div class="good"><strong>Once installed:</strong> it opens full-screen from your Home Screen and works offline after the first successful load.</div>
+      </div>
+      <div class="card">
+        <h2>Back up your progress</h2>
+        <p class="muted">Your completed-session ticks are stored on this device. Export them before clearing Safari data or moving to a new phone.</p>
+        <button id="exportProgress" style="border:none;border-radius:12px;padding:12px 14px;background:#17324d;color:white;font-weight:700;cursor:pointer">Export progress</button>
+        <label style="display:inline-block;margin-left:8px;border:1px solid #d9e0e8;border-radius:12px;padding:11px 14px;background:white;font-weight:700;cursor:pointer">
+          Import progress
+          <input id="importProgress" type="file" accept=".json,application/json" style="display:none">
+        </label>
+        <p id="backupStatus" class="small muted"></p>
+      </div>
+    </div>
+    <div class="card" style="margin-top:18px">
+      <h2>Updating the plan later</h2>
+      <p>When the hosted files are updated, the Home Screen app can receive the new version the next time it is opened online. Your local completion data remains separate from the training-plan files.</p>
+    </div>
+  </section>
+
+  <footer>
+    Training-planning prototype. Adjust sessions for illness, injury, excessive fatigue, unsafe weather or worsening neurological symptoms.
+  </footer>
+</div>
+
+<script>
+const week = [
+  {day:"Mon", am:"Rest", pm:"Upper strength", amTag:"rest", pmTag:"strength"},
+  {day:"Tue", am:"Run 40–50 min", pm:"Lower strength", amTag:"run", pmTag:"strength"},
+  {day:"Wed", am:"Easy bike 40–50 min", pm:"Pool swim 2–3 km", amTag:"bike", pmTag:"swim"},
+  {day:"Thu", am:"Quality bike 45–60 min", pm:"Upper strength", amTag:"bike", pmTag:"strength"},
+  {day:"Fri", am:"Rest", pm:"Rest", amTag:"rest", pmTag:"rest"},
+  {day:"Sat", am:"Long run", pm:"Rest", amTag:"run", pmTag:"rest"},
+  {day:"Sun", am:"Long bike + brick when scheduled", pm:"Swim / open water", amTag:"bike", pmTag:"swim"}
+];
+
+function renderWeek(id){
+  const el = document.getElementById(id);
+  el.innerHTML = week.map(d=>`
+    <div class="day">
+      <strong>${d.day}</strong>
+      <div class="am"><span class="tag ${d.amTag}">AM</span><br>${d.am}</div>
+      <div class="pm"><span class="tag ${d.pmTag}">PM</span><br>${d.pm}</div>
+    </div>`).join("");
+}
+renderWeek("miniWeek"); renderWeek("fullWeek");
+
+const phases = [
+  {name:"Base consolidation",date:"12 Oct – 8 Nov",goal:"Add the third bike, calibrate bike zones, begin open-water swimming and introduce the first tiny brick.",pct:18},
+  {name:"Build 1 · Aerobic strength",date:"9 Nov – 6 Dec",goal:"Extend bike duration, improve sustainable tempo/threshold work and keep running durable.",pct:36},
+  {name:"Build 2 · Endurance + race effort",date:"7 Dec – 3 Jan",goal:"Longer endurance, more 70.3-specific cycling and consistent fueling practice.",pct:55},
+  {name:"Race-specific build",date:"4 Jan – 31 Jan",goal:"Race pacing, nutrition, longer bricks and meaningful race-effort blocks.",pct:72},
+  {name:"Peak / simulation",date:"1 Feb – 14 Feb",goal:"Highest specificity. One key simulation weekend, not a maximal race rehearsal.",pct:88},
+  {name:"Taper",date:"15 Feb – 6 Mar",goal:"Reduce fatigue while maintaining frequency and short race-intensity exposures.",pct:100}
+];
+document.getElementById("phaseList").innerHTML = phases.map(p=>`
+  <div class="phase-row">
+    <div><div class="phase-name">${p.name}</div><div class="phase-date">${p.date}</div></div>
+    <div>${p.goal}<div class="progress"><span style="width:${p.pct}%"></span></div></div>
+    <div class="muted">${p.pct}% through total plan</div>
+  </div>`).join("");
+
+const oct = [
+{
+ week:1, start:"Week 1 · 12 Oct", objective:"Add the third bike without creating unnecessary fatigue.",
+ sessions:[
+  {id:"w1tue",day:"Tuesday AM",type:"Run",tag:"run",title:"Aerobic run + strides",detail:"45 min total. Stay mainly Z2 (148–156 bpm). Finish with 6 × 20 sec relaxed strides with full easy recovery.",why:"Maintains run economy and leg speed without turning Tuesday into a high-fatigue session before lower strength."},
+  {id:"w1wedbike",day:"Wednesday AM",type:"Bike",tag:"bike",title:"Easy aerobic bike",detail:"40 min very easy Z1–low Z2. Cadence 85–95 rpm. No hard efforts.",why:"Adds cycling frequency and aerobic volume with minimal recovery cost."},
+  {id:"w1swim",day:"Wednesday PM",type:"Swim",tag:"swim",title:"Technique + aerobic swim",detail:"~2.2 km. Warm-up, drills, then 8 × 100 m easy/moderate with consistent technique.",why:"Rebuilds repeatable swim mechanics while keeping fatigue low."},
+  {id:"w1thu",day:"Thursday AM",type:"Bike",tag:"bike",title:"Tempo bike",detail:"50 min: 10 min easy → 3 × 8 min at RPE 6 / controlled Z3 with 3 min easy between → cool-down.",why:"Begins building sustainable cycling power without threshold-level fatigue."},
+  {id:"w1sat",day:"Saturday",type:"Run",tag:"run",title:"Long aerobic run",detail:"90 min Z2. Keep mechanics natural. Do not chase pace if wind is strong.",why:"Builds durability and aerobic capacity while preserving Sunday bike quality."},
+  {id:"w1sun",day:"Sunday AM",type:"Bike",tag:"bike",title:"Long bike",detail:"2 hours Z2. Smooth cadence. Start fueling and drinking early rather than waiting to feel depleted.",why:"Begins extending your bike endurance from the current 50–60 km base."},
+  {id:"w1sunswim",day:"Sunday PM",type:"Swim",tag:"swim",title:"Easy aerobic swim",detail:"~2.0 km relaxed pool swim.",why:"Adds low-impact aerobic volume and reinforces swim frequency."}
+ ]},
+{
+ week:2, start:"Week 2 · 19 Oct", objective:"Establish your bike threshold and keep building endurance.",
+ sessions:[
+  {id:"w2tue",day:"Tuesday AM",type:"Run",tag:"run",title:"Controlled tempo intervals",detail:"45–50 min: 10 min easy → 3 × 8 min Z3 (157–164 bpm) with 2 min jog recovery → cool-down.",why:"Raises sustainable run intensity without needing VO₂-type work."},
+  {id:"w2wedbike",day:"Wednesday AM",type:"Bike",tag:"bike",title:"Recovery bike",detail:"40 min Z1–Z2. Keep this genuinely easy.",why:"Protects Thursday’s benchmark session while maintaining cycling frequency."},
+  {id:"w2swim",day:"Wednesday PM",type:"Swim",tag:"swim",title:"Aerobic 200s",detail:"~2.3 km with 6 × 200 m aerobic intervals after warm-up and technique work.",why:"Moves from short repeats toward sustained swimming rhythm."},
+  {id:"w2thu",day:"Thursday AM",type:"Bike",tag:"bike",title:"Bike LTHR benchmark",detail:"55 min total: 15 min progressive warm-up → 30 min maximal sustainable effort → 10 min easy. Record average HR for final 20 min.",why:"Creates sport-specific bike zones instead of borrowing your running threshold."},
+  {id:"w2sat",day:"Saturday",type:"Run",tag:"run",title:"Long aerobic run",detail:"95 min Z2. Fuel once if the run exceeds ~75 min.",why:"Gradual time-on-feet progression without unnecessary distance chasing."},
+  {id:"w2sun",day:"Sunday AM",type:"Bike",tag:"bike",title:"Long bike",detail:"2 hr 15 min Z2. Focus on steady output and position.",why:"Improves continuous bike durability and pacing discipline."},
+  {id:"w2sunswim",day:"Sunday PM",type:"Swim",tag:"swim",title:"Easy aerobic swim",detail:"2.0–2.2 km relaxed.",why:"Low-cost volume after the long ride."}
+ ]},
+{
+ week:3, start:"Week 3 · 26 Oct", objective:"First open-water exposure and first very short brick.",
+ sessions:[
+  {id:"w3tue",day:"Tuesday AM",type:"Run",tag:"run",title:"Cruise intervals",detail:"45 min: 10 min easy → 4 × 6 min high Z3 / low Z4 with 2 min jog → cool-down.",why:"A controlled threshold stimulus while total weekly run volume stays modest."},
+  {id:"w3wedbike",day:"Wednesday AM",type:"Bike",tag:"bike",title:"Aerobic bike + cadence",detail:"45 min Z2 with 4 × 1 min faster cadence, not harder resistance.",why:"Improves cycling economy without adding meaningful fatigue."},
+  {id:"w3swim",day:"Wednesday PM",type:"Swim",tag:"swim",title:"100 m repeat set",detail:"~2.4 km with 12 × 100 m steady. Prioritise consistent stroke quality.",why:"Builds repeatable aerobic swim fitness."},
+  {id:"w3thu",day:"Thursday AM",type:"Bike",tag:"bike",title:"Controlled bike intervals",detail:"50 min with 4 × 6 min Z3–low Z4, 2 min easy between.",why:"Builds sustainable bike power from your newly established cycling threshold."},
+  {id:"w3sat",day:"Saturday",type:"Run",tag:"run",title:"Long aerobic run",detail:"100 min Z2. Final 10 min can become steady only if you are genuinely fresh.",why:"Extends aerobic durability without converting the session into a race effort."},
+  {id:"w3sunbike",day:"Sunday AM",type:"Bike",tag:"bike",title:"Long bike + first brick",detail:"2 hr 30 min Z2, then immediately 10 min very easy running. Quick cadence, pace irrelevant.",why:"Introduces the bike-to-run transition with almost no extra training stress."},
+  {id:"w3ow",day:"Sunday PM",type:"Swim",tag:"swim",title:"First open-water swim",detail:"20–30 min easy. Focus on comfort, sighting and swimming straight. Use safe conditions and appropriate supervision/buddy systems.",why:"Builds open-water skill before race-specific training starts."}
+ ]}
+];
+
+function renderOctober(filter="all"){
+  const wrap = document.getElementById("octoberSessions");
+  const selected = filter==="all" ? oct : oct.filter(w=>String(w.week)===filter);
+  wrap.innerHTML = selected.map(w=>`
+    <div style="margin:22px 0 8px">
+      <h2 class="section-title">${w.start}</h2>
+      <div class="callout"><strong>Week objective:</strong> ${w.objective}</div>
+    </div>
+    <div class="session-grid">
+      ${w.sessions.map(s=>`
+        <div class="session">
+          <div class="session-top">
+            <div>
+              <div class="small muted">${s.day}</div>
+              <h3>${s.title}</h3>
+            </div>
+            <span class="tag ${s.tag}">${s.type}</span>
+          </div>
+          <div class="details">
+            <p><strong>Session:</strong> ${s.detail}</p>
+            <p><strong>Why:</strong> ${s.why}</p>
+          </div>
+          <label class="checkline">
+            <input type="checkbox" data-session="${s.id}">
+            <span>Completed</span>
+          </label>
+        </div>`).join("")}
+    </div>
+  `).join("");
+  restoreChecks();
+}
+
+function restoreChecks(){
+  document.querySelectorAll('input[data-session]').forEach(cb=>{
+    const k = "him_"+cb.dataset.session;
+    cb.checked = localStorage.getItem(k)==="1";
+    cb.onchange = ()=>localStorage.setItem(k, cb.checked ? "1":"0");
+  });
+}
+renderOctober();
+document.getElementById("weekFilter").addEventListener("change",e=>renderOctober(e.target.value));
+
+document.querySelectorAll("nav button").forEach(btn=>{
+  btn.addEventListener("click",()=>{
+    document.querySelectorAll("nav button").forEach(b=>b.classList.remove("active"));
+    document.querySelectorAll(".view").forEach(v=>v.classList.remove("active"));
+    btn.classList.add("active");
+    document.getElementById(btn.dataset.view).classList.add("active");
+  });
+});
+
+const exportBtn = document.getElementById("exportProgress");
+const importInput = document.getElementById("importProgress");
+const backupStatus = document.getElementById("backupStatus");
+
+if(exportBtn){
+  exportBtn.addEventListener("click", ()=>{
+    const data = {};
+    for(let i=0;i<localStorage.length;i++){
+      const k = localStorage.key(i);
+      if(k && k.startsWith("him_")) data[k] = localStorage.getItem(k);
+    }
+    const blob = new Blob([JSON.stringify({app:"70.3 Plan", exportedAt:new Date().toISOString(), data}, null, 2)], {type:"application/json"});
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "half-ironman-progress.json";
+    a.click();
+    URL.revokeObjectURL(a.href);
+    backupStatus.textContent = "Progress export created.";
+  });
+}
+if(importInput){
+  importInput.addEventListener("change", async (e)=>{
+    const file = e.target.files[0];
+    if(!file) return;
+    try{
+      const payload = JSON.parse(await file.text());
+      Object.entries(payload.data || {}).forEach(([k,v])=>{
+        if(k.startsWith("him_")) localStorage.setItem(k, v);
+      });
+      backupStatus.textContent = "Progress imported. Reloading…";
+      setTimeout(()=>location.reload(), 500);
+    }catch(err){
+      backupStatus.textContent = "Could not import that file.";
+    }
+  });
+}
+if("serviceWorker" in navigator){
+  window.addEventListener("load", ()=>{
+    navigator.serviceWorker.register("./sw.js").catch(()=>{});
+  });
+}
+
+</script>
+</body>
+</html>
