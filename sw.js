@@ -1,5 +1,5 @@
 
-const CACHE = "half-ironman-plan-v2";
+const CACHE = "half-ironman-v2-mobile-nav";
 const ASSETS = [
   "./",
   "./index.html",

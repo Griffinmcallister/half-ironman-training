@@ -151,8 +151,40 @@
   .small{font-size:12px}
   footer{padding:24px 4px;color:var(--muted);font-size:12px;text-align:center}
   @media(max-width:900px){
-    .hero-grid,.cols-2,.cols-3,.week-strip,.session-grid{grid-template-columns:1fr}
+    body{padding-top:env(safe-area-inset-top)}
+    .app{padding:14px}
+    .hero{padding:20px;border-radius:20px}
+    .hero h1{font-size:27px}
+    .hero-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+    .cols-2,.cols-3,.week-strip,.session-grid{grid-template-columns:1fr}
     .phase-row{grid-template-columns:1fr}
+
+    nav{
+      position:sticky;
+      top:calc(env(safe-area-inset-top) + 6px);
+      z-index:1000;
+      display:grid;
+      grid-template-columns:repeat(3,minmax(0,1fr));
+      gap:7px;
+      margin:12px 0 18px;
+      padding:8px;
+      background:rgba(245,247,251,.96);
+      -webkit-backdrop-filter:blur(14px);
+      backdrop-filter:blur(14px);
+      border:1px solid rgba(217,224,232,.9);
+      border-radius:16px;
+      box-shadow:0 8px 24px rgba(23,50,77,.12);
+    }
+    nav button{
+      width:100%;
+      min-width:0;
+      padding:9px 6px;
+      border-radius:11px;
+      font-size:11px;
+      line-height:1.15;
+      white-space:normal;
+      box-shadow:none;
+    }
   }
 
 @media(max-width:700px){
@@ -167,6 +199,13 @@
   }
   nav button{white-space:nowrap;box-shadow:none;border:1px solid #d9e0e8;padding:9px 12px}
 }
+
+
+  .mobile-label{display:none}
+  @media(max-width:900px){
+    .desktop-label{display:none}
+    .mobile-label{display:inline}
+  }
 
 </style>
 
@@ -194,10 +233,10 @@
   <nav>
     <button class="active" data-view="overview">Overview</button>
     <button data-view="week">Weekly Schedule</button>
-    <button data-view="october">Until End of October</button>
-    <button data-view="phases">Training Phases</button>
+    <button data-view="october"><span class="desktop-label">Until End of October</span><span class="mobile-label">October Plan</span></button>
+    <button data-view="phases"><span class="desktop-label">Training Phases</span><span class="mobile-label">Phases</span></button>
     <button data-view="zones">HR Zones</button>
-    <button data-view="reasoning">Why This Works</button>
+    <button data-view="reasoning"><span class="desktop-label">Why This Works</span><span class="mobile-label">Why</span></button>
 <button data-view="settingsView">App & Backup</button>
   </nav>
 
